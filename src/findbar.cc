@@ -18,6 +18,7 @@
 #include "pixmaps.h"
 #include "uicmd.hh"
 #include "bw.h"
+#include "uistyle.hh"
 
 /*
  * Local sub class
@@ -167,6 +168,7 @@ Findbar::Findbar(int width, int height) :
    add(i);
 
     next_btn = new CustButton(x, border, button_width, height, "Next");
+    a_UI_apply_label_font(next_btn);
     x += button_width + gap;
     next_btn->shortcut(FL_Enter);
     next_btn->callback(search_cb, this);
@@ -177,6 +179,7 @@ Findbar::Findbar(int width, int height) :
    add(next_btn);
 
     prev_btn= new CustButton(x, border, button_width, height, "Previous");
+    a_UI_apply_label_font(prev_btn);
     x += button_width + gap;
     prev_btn->shortcut(FL_SHIFT+FL_Enter);
     prev_btn->callback(searchBackwards_cb, this);
@@ -188,6 +191,7 @@ Findbar::Findbar(int width, int height) :
 
     check_btn = new Fl_Check_Button(x, border, 2*button_width, height,
                               "Case-sensitive");
+    a_UI_apply_label_font(check_btn);
     x += 2 * button_width + gap;
     check_btn->clear_visible_focus();
    add(check_btn);

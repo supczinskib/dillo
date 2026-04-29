@@ -21,6 +21,7 @@
 
 
 #include "fltkviewport.hh"
+#include "../src/prefs.h"
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
@@ -59,12 +60,14 @@ FltkViewport::FltkViewport (int X, int Y, int W, int H, const char *label):
 
    hscrollbar = new CustScrollbar (x (), y (), 1, 1);
    hscrollbar->type(FL_HORIZONTAL);
+   hscrollbar->labelcolor(PREFS_UI_SCROLLBAR_ARROW_COLOR);
    hscrollbar->callback (hscrollbarCallback, this);
    hscrollbar->hide();
    add (hscrollbar);
 
    vscrollbar = new Fl_Scrollbar (x (), y(), 1, 1);
    vscrollbar->type(FL_VERTICAL);
+   vscrollbar->labelcolor(PREFS_UI_SCROLLBAR_ARROW_COLOR);
    vscrollbar->callback (vscrollbarCallback, this);
    vscrollbar->hide();
    add (vscrollbar);

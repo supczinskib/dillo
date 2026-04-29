@@ -30,6 +30,7 @@ extern "C" {
 #define PREFS_UI_TAB_ACTIVE_FG_COLOR 18
 #define PREFS_UI_TAB_BG_COLOR 19
 #define PREFS_UI_TAB_FG_COLOR 20
+#define PREFS_UI_SCROLLBAR_ARROW_COLOR 21
 
 /** Panel sizes. */
 enum { P_tiny = 0, P_small, P_medium };
@@ -54,8 +55,11 @@ typedef struct {
    int32_t bg_color;
    int32_t ui_button_highlight_color;
    int32_t ui_fg_color;
+   char *ui_font;
+   int32_t ui_font_size;
    int32_t ui_main_bg_color;
    int32_t ui_selection_color;
+   int32_t ui_scrollbar_arrow_color;
    int32_t ui_tab_active_bg_color;
    int32_t ui_tab_active_fg_color;
    int32_t ui_tab_bg_color;

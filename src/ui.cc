@@ -24,6 +24,8 @@
 #include "timeout.hh"
 #include "utf8.hh"
 #include "tipwin.hh"
+#include "prefs.h"
+#include "uistyle.hh"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Pixmap.H>
@@ -460,6 +462,7 @@ CustButton *UI::make_button(const char *label, Fl_Image *img, Fl_Image *deimg,
    b->callback(b1_cb, INT2VOIDP(b_n));
    b->clear_visible_focus();
    b->labelsize(12);
+   a_UI_apply_label_font(b, FL_HELVETICA, 12);
    b->box(FL_FLAT_BOX);
    b->down_box(FL_THIN_DOWN_FRAME);
    p_xpos += bw;
@@ -558,12 +561,14 @@ void UI::make_progress_bars(int wide, int thin_up)
     // Images
     IProg = new CustProgressBox(p_xpos,p_ypos,pw,bh);
     IProg->labelsize(12);
+    a_UI_apply_label_font(IProg, FL_HELVETICA, 12);
     IProg->box(thin_up ? FL_THIN_UP_BOX : FL_EMBOSSED_BOX);
     IProg->update_label(wide ? "Images\n0 of 0" : "0 of 0");
     p_xpos += pw;
     // Page
     PProg = new CustProgressBox(p_xpos,p_ypos,pw,bh);
     PProg->labelsize(12);
+    a_UI_apply_label_font(PProg, FL_HELVETICA, 12);
     PProg->box(thin_up ? FL_THIN_UP_BOX : FL_EMBOSSED_BOX);
     PProg->update_label(wide ? "Page\n0.0 KB" : "0.0 KB");
 }
@@ -579,6 +584,7 @@ void UI::make_filemenu_button()
 
    FileButton = btn = new CustButton(p_xpos,0,bw,bh,"W");
    btn->labeltype(FL_FREE_LABELTYPE);
+   a_UI_apply_label_font(btn);
    btn->measure_label(w, h);
    padding = w;
    btn->copy_label(PanelSize == P_tiny ? "&F" : "&File");
@@ -688,7 +694,8 @@ void UI::make_status_bar(int ww, int wh)
     // Status box
     StatusOutput = new Fl_Output(0, wh-sh, ww-bm_w, sh);
     StatusOutput->value("https://dillo-browser.org/");
-    StatusOutput->labelsize(8);
+    StatusOutput->textsize(8);
+    a_UI_apply_output_font(StatusOutput, FL_HELVETICA, 8);
     StatusOutput->box(FL_THIN_DOWN_BOX);
     StatusOutput->clear_visible_focus();
     StatusOutput->color(FL_BACKGROUND_COLOR);
@@ -696,6 +703,7 @@ void UI::make_status_bar(int ww, int wh)
     // Bug Meter
     BugMeter = new CustButton(ww-bm_w,wh-sh,bm_w,sh);
     BugMeter->image(icons->ImgMeterOK);
+    a_UI_apply_label_font(BugMeter);
     BugMeter->box(FL_THIN_DOWN_BOX);
     BugMeter->align(FL_ALIGN_INSIDE | FL_ALIGN_TEXT_NEXT_TO_IMAGE);
     BugMeter->set_tooltip("Show HTML bugs\n(right-click for menu)");

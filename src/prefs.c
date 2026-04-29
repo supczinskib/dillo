@@ -22,7 +22,7 @@
 #define PREFS_FONT_MONOSPACE  "DejaVu Sans Mono"
 #define PREFS_SEARCH_URL      "dd http://duckduckgo.com/lite/?kp=-1&kd=-1&q=%s"
 #define PREFS_NO_PROXY        "localhost 127.0.0.1"
-#define PREFS_SAVE_DIR        "/tmp/"
+#define PREFS_SAVE_DIR        ""
 #define PREFS_HTTP_REFERER    "host"
 #define PREFS_HTTP_USER_AGENT "Dillo/" VERSION
 #define PREFS_THEME           "none"
@@ -124,8 +124,11 @@ void a_Prefs_init(void)
    prefs.theme = dStrdup(PREFS_THEME);
    prefs.ui_button_highlight_color = -1;
    prefs.ui_fg_color = -1;
+   prefs.ui_font = NULL;
+   prefs.ui_font_size = 0;
    prefs.ui_main_bg_color = -1;
    prefs.ui_selection_color = -1;
+   prefs.ui_scrollbar_arrow_color = -1;
    prefs.ui_tab_active_bg_color = -1;
    prefs.ui_tab_bg_color = -1;
    prefs.ui_tab_active_fg_color = -1;
@@ -153,6 +156,7 @@ void a_Prefs_freeall(void)
    dFree(prefs.font_fantasy);
    dFree(prefs.font_monospace);
    dFree(prefs.font_sans_serif);
+   dFree(prefs.ui_font);
    dFree(prefs.font_serif);
    a_Url_free(prefs.home);
    dFree(prefs.http_language);

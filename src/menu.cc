@@ -28,6 +28,8 @@
 #include "ui.hh" // for (UI *)
 #include "keys.hh"
 #include "timeout.hh"
+#include "prefs.h"
+#include "uistyle.hh"
 
 #include <unistd.h>
 
@@ -326,6 +328,7 @@ static void Menu_simple_popup_cb(void *data)
 
    ((UI*)popup_bw->ui)->window()->cursor(FL_CURSOR_DEFAULT);
 
+   a_UI_apply_menu_font((Fl_Menu_Item *)data);
    m = ((Fl_Menu_Item *)data)->popup(popup_x, popup_y);
 
    if (m && m->callback())
@@ -337,10 +340,24 @@ static void Menu_popup_cb(void *data)
 {
    const Fl_Menu_Item *picked;
    Menu_popup_data_t *d = (Menu_popup_data_t *)data;
+   Fl_Menu_Item title_item;
+   const Fl_Menu_Item *title = NULL;
 
    ((UI*)popup_bw->ui)->window()->cursor(FL_CURSOR_DEFAULT);
 
-   picked = d->menu->popup(popup_x, popup_y, d->title, d->picked);
+   a_UI_apply_menu_font((Fl_Menu_Item *)d->menu);
+
+   if (d->title) {
+      memset(&title_item, 0, sizeof(title_item));
+      title_item.text = d->title;
+      if (prefs.ui_font && prefs.ui_font[0])
+         title_item.labelfont(a_UI_font());
+      if (prefs.ui_font_size > 0)
+         title_item.labelsize(a_UI_font_size());
+      title = &title_item;
+   }
+
+   picked = d->menu->pulldown(popup_x, popup_y, 0, 0, d->picked, NULL, title);
    if (picked) {
       d->picked = picked;
       if (picked->callback())
@@ -712,8 +729,6 @@ void a_Menu_file_popup(BrowserWindow *bw, void *v_wid)
        (void*)"nw", FL_MENU_DIVIDER,0,0,0,0},
       {"Open file...", Keys::getShortcut(KEYS_OPEN), filemenu_cb,
        (void*)"of",0,0,0,0,0},
-      {"Open URL...", Keys::getShortcut(KEYS_GOTO), filemenu_cb,
-       (void*)"ou",0,0,0,0,0},
       {"Close", Keys::getShortcut(KEYS_CLOSE_TAB), filemenu_cb,
        (void*)"cw", FL_MENU_DIVIDER,0,0,0,0},
       {"Exit Dillo", Keys::getShortcut(KEYS_CLOSE_ALL), filemenu_cb,
@@ -922,6 +937,7 @@ void a_Menu_tools_popup(BrowserWindow *bw, int x, int y)
 #endif
    cur_smallicons ? pm[9].set() : pm[9].clear();
 
+   a_UI_apply_menu_font(pm);
    item = pm->popup(x, y);
    if (item) {
       ((Fl_Widget *)item)->do_callback();

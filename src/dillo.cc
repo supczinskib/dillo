@@ -379,6 +379,9 @@ static void setColors()
                   Fl::get_color(FL_FOREGROUND_COLOR));
    setUIColorWdef(PREFS_UI_TAB_FG_COLOR, prefs.ui_tab_fg_color,
                   Fl::get_color(FL_FOREGROUND_COLOR));
+   setUIColorWdef(PREFS_UI_SCROLLBAR_ARROW_COLOR,
+                  prefs.ui_scrollbar_arrow_color,
+                  Fl::get_color(FL_FOREGROUND_COLOR));
 }
 
 /**
@@ -561,6 +564,9 @@ int main(int argc, char **argv)
    Fl::set_font(FL_HELVETICA, defaultFont); // this seems to be the
                                             // only way to set the
                                             // default font in fltk1.3
+
+   if (prefs.ui_font && prefs.ui_font[0])
+      Fl::set_font(FL_FREE_FONT, prefs.ui_font);
 
    fl_message_title_default("Dillo: Message");
 

@@ -45,6 +45,7 @@
 #include "history.h"
 #include "msg.h"
 #include "prefs.h"
+#include "uistyle.hh"
 #include "misc.h"
 #include "dlib/dlib.h"
 #include "IO/control.h"
@@ -168,6 +169,7 @@ public:
       /* control buttons go inside a group */
       Control = new Fl_Group(ww-ctl_w,0,ctl_w,ctab_h);
        CloseBtn = new CustButton(ww-ctl_w+2,0,btn_w,ctab_h, "X");
+       a_UI_apply_label_font(CloseBtn);
        CloseBtn->box(FL_THIN_UP_BOX);
        CloseBtn->clear_visible_focus();
        CloseBtn->set_tooltip(prefs.right_click_closes_tab ?
@@ -309,6 +311,7 @@ UI *CustTabs::add_new_tab(UI *old_ui, int focus)
    CustTabButton *btn = new CustTabButton(num_tabs()*tab_w,0,tab_w,ctab_h);
    btn->align(FL_ALIGN_INSIDE);
    btn->labelsize(btn->labelsize()-2);
+   a_UI_apply_label_font(btn, FL_HELVETICA, btn->labelsize());
    btn->copy_label(DEFAULT_TAB_LABEL);
    btn->clear_visible_focus();
    btn->box(FL_GTK_THIN_UP_BOX);
@@ -1093,13 +1096,21 @@ void a_UIcmd_init(void)
 {
    const char *dir = prefs.save_dir;
 
-   if (dir && *dir) {
-      // assert a trailing '/'
-      save_dir =
-         (dir[strlen(dir)-1] == '/')
-         ? dStrdup(dir)
-         : dStrconcat(dir, "/", NULL);
-   }
+   /* If save_dir is not configured in dillorc, save into the user's home
+    * directory.  Dillo's historical built-in default was /tmp/, but on the
+    * small embedded desktop this makes the Save Page file chooser start
+    * outside the user's normal working directory.
+    */
+   if (!(dir && *dir))
+      dir = getenv("HOME");
+   if (!(dir && *dir))
+      dir = "/root";
+
+   // assert a trailing '/'
+   save_dir =
+      (dir[strlen(dir)-1] == '/')
+      ? dStrdup(dir)
+      : dStrconcat(dir, "/", NULL);
 }
 
 /*
