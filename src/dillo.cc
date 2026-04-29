@@ -40,6 +40,7 @@
 #include "msg.h"
 #include "paths.hh"
 #include "uicmd.hh"
+#include "i18n.hh"
 
 #include "prefs.h"
 #include "prefsparser.hh"
@@ -542,6 +543,8 @@ int main(int argc, char **argv)
 
    Fl::scheme(prefs.theme);
 
+   a_I18n_init();
+
    // Disable drag and drop as it crashes on MacOSX
    Fl::dnd_text_ops(0);
 
@@ -568,7 +571,9 @@ int main(int argc, char **argv)
    if (prefs.ui_font && prefs.ui_font[0])
       Fl::set_font(FL_FREE_FONT, prefs.ui_font);
 
-   fl_message_title_default("Dillo: Message");
+   a_I18n_apply_fonts();
+
+   fl_message_title_default(DTR("Dillo: Message"));
 
    // Create a new UI/bw pair
    BrowserWindow *bw = a_UIcmd_browser_window_new(0, 0, xid, NULL);

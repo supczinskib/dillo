@@ -44,7 +44,7 @@ TipWin::TipWin() : Fl_Menu_Window(1, 1)     // will autosize
    bgcolor = fl_color_cube(FL_NUM_RED - 1, FL_NUM_GREEN - 1, FL_NUM_BLUE - 2);
    recent = 0;
    tip[0] = '\0';
-   if (prefs.ui_font && prefs.ui_font[0])
+   if (a_UI_has_font_override())
       labelfont(a_UI_font());
    if (prefs.ui_font_size > 0)
       labelsize(a_UI_font_size());

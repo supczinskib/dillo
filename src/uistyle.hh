@@ -13,9 +13,17 @@
 #include <FL/fl_ask.H>
 
 #include "prefs.h"
+#include "i18n.hh"
+
+static inline int a_UI_has_font_override(void)
+{
+   return a_I18n_use_cjk_font() || (prefs.ui_font && prefs.ui_font[0]);
+}
 
 static inline Fl_Font a_UI_font(Fl_Font fallback = FL_HELVETICA)
 {
+   if (a_I18n_use_cjk_font())
+      return a_I18n_ui_font(fallback);
    return (prefs.ui_font && prefs.ui_font[0]) ? FL_FREE_FONT : fallback;
 }
 
@@ -29,7 +37,7 @@ static inline void a_UI_apply_label_font(Fl_Widget *w, Fl_Font fallback_font = F
 {
    if (!w)
       return;
-   if (prefs.ui_font && prefs.ui_font[0])
+   if (a_UI_has_font_override())
       w->labelfont(a_UI_font(fallback_font));
    if (prefs.ui_font_size > 0)
       w->labelsize(a_UI_font_size(fallback_size));
@@ -40,7 +48,7 @@ static inline void a_UI_apply_input_font(Fl_Input *w, Fl_Font fallback_font = FL
 {
    if (!w)
       return;
-   if (prefs.ui_font && prefs.ui_font[0]) {
+   if (a_UI_has_font_override()) {
       w->labelfont(a_UI_font(fallback_font));
       w->textfont(a_UI_font(fallback_font));
    }
@@ -55,7 +63,7 @@ static inline void a_UI_apply_output_font(Fl_Output *w, Fl_Font fallback_font = 
 {
    if (!w)
       return;
-   if (prefs.ui_font && prefs.ui_font[0]) {
+   if (a_UI_has_font_override()) {
       w->labelfont(a_UI_font(fallback_font));
       w->textfont(a_UI_font(fallback_font));
    }
@@ -71,7 +79,7 @@ static inline void a_UI_apply_text_display_font(Fl_Text_Display *w,
 {
    if (!w)
       return;
-   if (prefs.ui_font && prefs.ui_font[0])
+   if (a_UI_has_font_override())
       w->textfont(a_UI_font(fallback_font));
    if (prefs.ui_font_size > 0)
       w->textsize(a_UI_font_size(fallback_size));
@@ -83,7 +91,7 @@ static inline void a_UI_apply_menu_font(Fl_Menu_Item *menu)
       return;
 
    for (Fl_Menu_Item *item = menu; item->text; ++item) {
-      if (prefs.ui_font && prefs.ui_font[0])
+      if (a_UI_has_font_override())
          item->labelfont(a_UI_font());
       if (prefs.ui_font_size > 0)
          item->labelsize(a_UI_font_size());
@@ -98,7 +106,7 @@ static inline void a_UI_apply_browser_font(Fl_Browser_ *w, Fl_Font fallback_font
 {
    if (!w)
       return;
-   if (prefs.ui_font && prefs.ui_font[0])
+   if (a_UI_has_font_override())
       w->textfont(a_UI_font(fallback_font));
    if (prefs.ui_font_size > 0)
       w->textsize(a_UI_font_size(fallback_size));
@@ -108,7 +116,7 @@ static inline void a_UI_apply_menu_widget_font(Fl_Menu_ *w)
 {
    if (!w)
       return;
-   if (prefs.ui_font && prefs.ui_font[0]) {
+   if (a_UI_has_font_override()) {
       w->labelfont(a_UI_font());
       w->textfont(a_UI_font());
    }
@@ -121,7 +129,7 @@ static inline void a_UI_apply_menu_widget_font(Fl_Menu_ *w)
 
 static inline void a_UI_apply_message_font()
 {
-   if (prefs.ui_font && prefs.ui_font[0]) {
+   if (a_UI_has_font_override()) {
       fl_message_font(a_UI_font(), a_UI_font_size());
    } else if (prefs.ui_font_size > 0) {
       fl_message_font(FL_HELVETICA, a_UI_font_size());

@@ -11,6 +11,7 @@
  */
 
 #include "form.hh"
+#include "i18n.hh"
 #include "html_common.hh"
 
 #include <errno.h>
@@ -492,11 +493,11 @@ void Html_tag_open_input(DilloHtml *html, const char *tag, int tagsize)
       resource = factory->createEntryResource(size, false, name, NULL);
    } else if (!dStrAsciiCasecmp(type, "submit")) {
       inp_type = DILLO_HTML_INPUT_SUBMIT;
-      init_str = (value) ? value : dStrdup("Submit");
+      init_str = (value) ? value : dStrdup(DTR("Submit form"));
       resource = factory->createLabelButtonResource(init_str);
    } else if (!dStrAsciiCasecmp(type, "reset")) {
       inp_type = DILLO_HTML_INPUT_RESET;
-      init_str = (value) ? value : dStrdup("Reset");
+      init_str = (value) ? value : dStrdup(DTR("Reset form"));
       resource = factory->createLabelButtonResource(init_str);
    } else if (!dStrAsciiCasecmp(type, "image")) {
       if (URL_FLAGS(html->base_url) & URL_SpamSafe ||
@@ -504,7 +505,7 @@ void Html_tag_open_input(DilloHtml *html, const char *tag, int tagsize)
          /* Don't request the image; make a text submit button instead */
          inp_type = DILLO_HTML_INPUT_SUBMIT;
          attrbuf = a_Html_get_attr(html, tag, tagsize, "alt");
-         label = attrbuf ? attrbuf : value ? value : name ? name : "Submit";
+         label = attrbuf ? attrbuf : value ? value : name ? name : DTR("Submit form");
          init_str = dStrdup(label);
          resource = factory->createLabelButtonResource(init_str);
       } else {
@@ -532,7 +533,7 @@ void Html_tag_open_input(DilloHtml *html, const char *tag, int tagsize)
       }
       if (valid) {
          inp_type = DILLO_HTML_INPUT_FILE;
-         init_str = dStrdup("File selector");
+         init_str = dStrdup(DTR("File selector"));
          resource = factory->createLabelButtonResource(init_str);
       }
    } else if (!dStrAsciiCasecmp(type, "button")) {
@@ -1091,10 +1092,9 @@ void DilloHtmlForm::submit(DilloHtmlInput *active_input, EventButton *event)
 {
    if (!dStrAsciiCasecmp(URL_SCHEME(html->page_url), "https") &&
        dStrAsciiCasecmp(URL_SCHEME(action), "https")) {
-      int choice = a_Dialog_choice("Dillo: Insecure form submission",
-                                   "A form on a SECURE page wants to use an "
-                                   "INSECURE protocol to submit data.",
-                                   "Continue", "Cancel", NULL);
+      int choice = a_Dialog_choice(DTR("Dillo: Insecure form submission"),
+                                   DTR("A form on a SECURE page wants to use an INSECURE protocol to submit data."),
+                                   DTR("Continue"), DTR("Cancel"), NULL);
       if (choice != 1)
          return;
    }
@@ -1813,15 +1813,15 @@ void DilloHtmlInput::readFile (BrowserWindow *bw)
 {
    const char *filename = a_UIcmd_select_file();
    if (filename) {
-      a_UIcmd_set_msg(bw, "Loading file...");
+      a_UIcmd_set_msg(bw, DTR("Loading file..."));
       dStr_free(file_data, 1);
       file_data = a_Misc_file2dstr(filename);
       if (file_data) {
-         a_UIcmd_set_msg(bw, "File loaded.");
+         a_UIcmd_set_msg(bw, DTR("File loaded."));
          LabelButtonResource *lbr = (LabelButtonResource*)embed->getResource();
          lbr->setLabel(filename);
       } else {
-         a_UIcmd_set_msg(bw, "ERROR: can't load: %s", filename);
+         a_UIcmd_set_msg(bw, DTR("ERROR: can't load: %s"), filename);
       }
    }
 }

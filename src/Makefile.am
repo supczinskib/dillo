@@ -37,6 +37,8 @@ dillo_LDADD = \
 
 dillo_SOURCES = \
 	dillo.cc \
+	i18n.cc \
+	i18n.hh \
 	version.cc \
 	version.hh \
 	paths.cc \

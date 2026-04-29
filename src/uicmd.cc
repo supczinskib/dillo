@@ -36,6 +36,7 @@
 #include "keys.hh"
 #include "ui.hh"
 #include "uicmd.hh"
+#include "i18n.hh"
 #include "timeout.hh"
 #include "utf8.hh"
 #include "menu.hh"
@@ -543,9 +544,9 @@ static void win_cb (Fl_Widget *w, void *cb_data) {
    }
 
    if (prefs.show_quit_dialog && ntabs > 1)
-      choice = a_Dialog_choice("Dillo: Close window?",
-                               "Window contains more than one tab.",
-                               "Close", "Cancel", NULL);
+      choice = a_Dialog_choice(DTR("Dillo: Close window?"),
+                               DTR("Window contains more than one tab."),
+                               DTR("Close"), DTR("Cancel"), NULL);
    if (choice == 1)
       while (ntabs-- > 0)
          a_UIcmd_close_bw(a_UIcmd_get_bw_by_widget(tabs->wizard()->value()));
@@ -731,9 +732,9 @@ void a_UIcmd_close_all_bw(void *force)
    int choice = 1;
 
    if (!force && prefs.show_quit_dialog && a_Bw_num() > 1)
-      choice = a_Dialog_choice("Dillo: Quit?",
-                               "More than one open tab or window.",
-                               "Quit", "Cancel", NULL);
+      choice = a_Dialog_choice(DTR("Dillo: Quit?"),
+                               DTR("More than one open tab or window."),
+                               DTR("Quit"), DTR("Cancel"), NULL);
    if (force || choice == 1)
       while ((bw = a_Bw_get(0)))
          a_UIcmd_close_bw((void*)bw);
@@ -1124,10 +1125,10 @@ static int UIcmd_save_file_check(const char *name)
       int ch;
       ds = dStr_sized_new(128);
       dStr_sprintf(ds,
-                  "The file: %s (%d Bytes) already exists. What do we do?",
+                  DTR("The file: %s (%d Bytes) already exists. What do we do?"),
                    name, (int)ss.st_size);
-      ch = a_Dialog_choice("Dillo Save: File exists!", ds->str,
-                           "Abort", "Continue", "Rename", NULL);
+      ch = a_Dialog_choice(DTR("Dillo Save: File exists!"), ds->str,
+                           DTR("Abort"), DTR("Continue"), DTR("Rename"), NULL);
       dStr_free(ds, 1);
       return ch;
    } else {
@@ -1179,7 +1180,7 @@ void a_UIcmd_save(void *vbw)
    const DilloUrl *url = a_History_get_url(NAV_TOP_UIDX(bw));
 
    if (url) {
-      UIcmd_save(bw, url, NULL, "Save Page as File");
+      UIcmd_save(bw, url, NULL, DTR("Save Page as File"));
    }
 }
 
@@ -1188,7 +1189,7 @@ void a_UIcmd_save(void *vbw)
  */
 const char *a_UIcmd_select_file()
 {
-   return a_Dialog_select_file("Dillo: Select a File", NULL, NULL);
+   return a_Dialog_select_file(DTR("Dillo: Select a File"), NULL, NULL);
 }
 
 /*
@@ -1221,7 +1222,7 @@ void a_UIcmd_open_file(void *vbw)
    char *name;
    DilloUrl *url;
 
-   name = a_Dialog_open_file("Dillo: Open File", NULL, "");
+   name = a_Dialog_open_file(DTR("Dillo: Open File"), NULL, "");
 
    if (name) {
       url = a_Url_new(name, "file:");
@@ -1275,7 +1276,7 @@ void a_UIcmd_search_dialog(void *vbw)
 {
    const char *query;
 
-   if ((query = a_Dialog_input("Dillo: Search", "Search the Web:"))) {
+   if ((query = a_Dialog_input(DTR("Dillo: Search"), DTR("Search the Web:")))) {
       char *url_str = UIcmd_make_search_str(query);
       a_UIcmd_open_urlstr(vbw, url_str);
       dFree(url_str);
@@ -1288,7 +1289,7 @@ void a_UIcmd_search_dialog(void *vbw)
 const char *a_UIcmd_get_passwd(const char *user)
 {
    const char *passwd;
-   const char *title = "Dillo: Password";
+   const char *title = DTR("Dillo: Password");
    char *msg = dStrconcat("Password for user \"", user, "\"", NULL);
    passwd = a_Dialog_passwd(title, msg);
    dFree(msg);
@@ -1300,7 +1301,7 @@ const char *a_UIcmd_get_passwd(const char *user)
  */
 void a_UIcmd_save_link(BrowserWindow *bw, const DilloUrl *url, char *filename)
 {
-   UIcmd_save(bw, url, filename, "Dillo: Save Link as File");
+   UIcmd_save(bw, url, filename, DTR("Dillo: Save Link as File"));
 }
 
 /*
@@ -1425,9 +1426,9 @@ void a_UIcmd_view_page_bugs(void *vbw)
    BrowserWindow *bw = (BrowserWindow*)vbw;
 
    if (bw->num_page_bugs > 0) {
-      a_Dialog_text_window("Dillo: Detected HTML errors", bw->page_bugs->str);
+      a_Dialog_text_window(DTR("Dillo: Detected HTML errors"), bw->page_bugs->str);
    } else {
-      a_Dialog_msg("Dillo: Good HTML!", "No HTML errors found while parsing!");
+      a_Dialog_msg(DTR("Dillo: Good HTML!"), DTR("No HTML errors found while parsing!"));
    }
 }
 
@@ -1615,7 +1616,7 @@ void a_UIcmd_set_page_title(BrowserWindow *bw, const char *label)
    const int size = 128;
    char title[size];
 
-   if (snprintf(title, size, "Dillo: %s", label ? label : "") >= size) {
+   if (snprintf(title, size, DTR("Dillo: %s"), label ? label : "") >= size) {
       uint_t i = MIN(size - 4, 1 + a_Utf8_end_of_char(title, size - 8));
       snprintf(title + i, 4, "...");
    }
@@ -1723,8 +1724,8 @@ void a_UIcmd_findtext_search(BrowserWindow *bw, const char *key,
 
    switch (l->search(key, case_sens, backward)) {
    case FindtextState::RESTART:
-      a_UIcmd_set_msg(bw, backward?"Top reached; restarting from the bottom."
-                                  :"Bottom reached; restarting from the top.");
+      a_UIcmd_set_msg(bw, backward?DTR("Top reached; restarting from the bottom.")
+                                  :DTR("Bottom reached; restarting from the top."));
       break;
    case FindtextState::NOT_FOUND:
       a_UIcmd_set_msg(bw, "\"%s\" not found.", key);

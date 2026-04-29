@@ -19,6 +19,7 @@
 #include "uicmd.hh"
 #include "bw.h"
 #include "uistyle.hh"
+#include "i18n.hh"
 
 /*
  * Local sub class
@@ -158,7 +159,7 @@ Findbar::Findbar(int width, int height) :
     hide_btn->callback(hide_cb, this);
     hide_btn->clear_visible_focus();
     hide_btn->box(FL_THIN_UP_BOX);
-    hide_btn->set_tooltip("Hide");
+    hide_btn->set_tooltip(DTR("Hide"));
    add(hide_btn);
 
     i = new MyInput(x, border, input_width, height);
@@ -167,30 +168,28 @@ Findbar::Findbar(int width, int height) :
     i->when(FL_WHEN_NEVER);
    add(i);
 
-    next_btn = new CustButton(x, border, button_width, height, "Next");
+    next_btn = new CustButton(x, border, button_width, height, DTR("Next"));
     a_UI_apply_label_font(next_btn);
     x += button_width + gap;
     next_btn->shortcut(FL_Enter);
     next_btn->callback(search_cb, this);
     next_btn->clear_visible_focus();
     next_btn->box(FL_THIN_UP_BOX);
-    next_btn->set_tooltip("Find next occurrence of the search phrase\n"
-                          "shortcut: Enter");
+    next_btn->set_tooltip(DTR("Find next occurrence of the search phrase\nshortcut: Enter"));
    add(next_btn);
 
-    prev_btn= new CustButton(x, border, button_width, height, "Previous");
+    prev_btn= new CustButton(x, border, button_width, height, DTR("Previous"));
     a_UI_apply_label_font(prev_btn);
     x += button_width + gap;
     prev_btn->shortcut(FL_SHIFT+FL_Enter);
     prev_btn->callback(searchBackwards_cb, this);
     prev_btn->clear_visible_focus();
     prev_btn->box(FL_THIN_UP_BOX);
-    prev_btn->set_tooltip("Find previous occurrence of the search phrase\n"
-                          "shortcut: Shift+Enter");
+    prev_btn->set_tooltip(DTR("Find previous occurrence of the search phrase\nshortcut: Shift+Enter"));
    add(prev_btn);
 
     check_btn = new Fl_Check_Button(x, border, 2*button_width, height,
-                              "Case-sensitive");
+                              DTR("Case-sensitive"));
     a_UI_apply_label_font(check_btn);
     x += 2 * button_width + gap;
     check_btn->clear_visible_focus();
