@@ -44,7 +44,6 @@
 #include "prefs.h"
 #include "uistyle.hh"
 #include "dlib/dlib.h"
-#include "i18n.hh"
 
 /*
  * Local Data
@@ -233,7 +232,7 @@ void a_Dialog_msg(const char *title, const char *msg)
    int ww = 410, wh = 105, gap = 10, ih = 58, bw = 88, bh = 28;
 
    if (!(title && *title))
-      title = DTR("Dillo: Message");
+      title = "Dillo: Message";
 
    Fl_Window *window = new Fl_Window(ww, wh, title);
    window->set_modal();
@@ -253,7 +252,7 @@ void a_Dialog_msg(const char *title, const char *msg)
     a_UI_apply_label_font(box);
 
     Fl_Return_Button *b = new Fl_Return_Button(ww - gap - bw, wh - gap - bh,
-                                               bw, bh, DTR("Close"));
+                                               bw, bh, "Close");
     b->align(FL_ALIGN_INSIDE | FL_ALIGN_CLIP);
     b->box(FL_UP_BOX);
     a_UI_apply_label_font(b);
@@ -290,7 +289,7 @@ const char *a_Dialog_input(const char *title, const char *msg)
    input_answer = 0;
 
    if (!(title && *title))
-      title = DTR("Dillo: Input");
+      title = "Dillo: Input";
 
    Fl_Window *window = new Fl_Window(ww,wh,title);
    window->set_modal();
@@ -334,20 +333,20 @@ const char *a_Dialog_input(const char *title, const char *msg)
           pm[j++].label(FL_NORMAL_LABEL, dStrdup(label));
        }
     }
-    ch->tooltip(DTR("Select search engine"));
+    ch->tooltip("Select search engine");
     a_UI_apply_menu_font(pm);
     ch->menu(pm);
     ch->value(prefs.search_url_idx);
 
     int xpos = ww-2*(gap+bw), ypos = ih+3*gap;
-    Fl_Return_Button *rb = new Fl_Return_Button(xpos, ypos, bw, bh, DTR("OK"));
+    Fl_Return_Button *rb = new Fl_Return_Button(xpos, ypos, bw, bh, "OK");
     a_UI_apply_label_font(rb);
     rb->align(FL_ALIGN_INSIDE|FL_ALIGN_CLIP);
     rb->box(FL_UP_BOX);
     rb->callback(input_cb, INT2VOIDP(1));
 
     xpos = ww-(gap+bw);
-    Fl_Button *b = new Fl_Button(xpos, ypos, bw, bh, DTR("Cancel"));
+    Fl_Button *b = new Fl_Button(xpos, ypos, bw, bh, "Cancel");
     a_UI_apply_label_font(b);
     b->align(FL_ALIGN_INSIDE|FL_ALIGN_CLIP);
     b->box(FL_UP_BOX);
@@ -375,7 +374,7 @@ const char *a_Dialog_input(const char *title, const char *msg)
 const char *a_Dialog_passwd(const char *title, const char *msg)
 {
    if (!(title && *title))
-      title = DTR("Dillo: Password");
+      title = "Dillo: Password";
    fl_message_title(title);
    return fl_password("%s", "", msg);
 }
@@ -556,7 +555,7 @@ static void Dialog_apply_file_chooser_style(Fl_File_Chooser *fc)
    if (!fc)
       return;
 
-   if (a_UI_has_font_override())
+   if (prefs.ui_font && prefs.ui_font[0])
       fc->textfont(a_UI_font());
    if (prefs.ui_font_size > 0)
       fc->textsize(a_UI_font_size());
@@ -684,7 +683,13 @@ static const char *Dialog_file_chooser(const char *title, const char *pattern,
    Dialog_file_chooser_paths(fname, start_dir, sizeof(start_dir),
                              preset_file, sizeof(preset_file));
 
-   Fl_File_Chooser *fc = new Fl_File_Chooser(start_dir, pattern, type, title);
+   /* Use the suggested file path in the constructor, like textedit.cxx.
+    * On the embedded FLTK build, setting value() after creating the chooser
+    * can leave the CREATE-dialog filename input empty, so downloads receive
+    * an unusable destination.
+    */
+   const char *chooser_path = preset_file[0] ? preset_file : start_dir;
+   Fl_File_Chooser *fc = new Fl_File_Chooser(chooser_path, pattern, type, title);
 
    if (preset_file[0])
       fc->value(preset_file);
@@ -820,7 +825,7 @@ void a_Dialog_text_window(const char *title, const char *txt)
    int wh = prefs.height, ww = prefs.width, bh = 30;
 
    if (!(title && *title))
-      title = DTR("Dillo: Text");
+      title = "Dillo: Text";
 
    Fl_Window *window = new Fl_Window(ww, wh, title);
    Fl_Group::current(0);
@@ -837,7 +842,7 @@ void a_Dialog_text_window(const char *title, const char *txt)
     td->wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, 0);
    window->add(td);
 
-    Fl_Return_Button *b = new Fl_Return_Button (0, wh-bh, ww, bh, DTR("Close"));
+    Fl_Return_Button *b = new Fl_Return_Button (0, wh-bh, ww, bh, "Close");
     a_UI_apply_label_font(b);
     b->callback(text_window_close_cb, td);
    window->add(b);
@@ -869,7 +874,7 @@ int a_Dialog_choice(const char *title, const char *msg, ...)
    int i, n;
 
    if (title == NULL || *title == '\0')
-      title = DTR("Dillo: Choice");
+      title = "Dillo: Choice";
 
    va_start(ap, msg);
    for (n = 0; va_arg(ap, char *) != NULL; n++);
@@ -946,7 +951,7 @@ int a_Dialog_user_password(const char *title, const char *msg,
 
    /* window is resized below */
    if (!(title && *title))
-      title = DTR("Dillo: User/Password");
+      title = "Dillo: User/Password";
    Fl_Window *window = new Fl_Window(window_w,window_h,title);
    Fl_Group::current(0);
    window->user_data(NULL);
@@ -969,14 +974,14 @@ int a_Dialog_user_password(const char *title, const char *msg,
 
    /* inputs */
    y += msg_h + 20;
-   Fl_Input *user_input = new Fl_Input(input_x, y, input_w, input_h, DTR("User"));
+   Fl_Input *user_input = new Fl_Input(input_x, y, input_w, input_h, "User");
    user_input->labelsize(14);
    user_input->textsize(14);
    a_UI_apply_input_font(user_input);
    window->add(user_input);
    y += input_h + 10;
    Fl_Secret_Input *password_input =
-      new Fl_Secret_Input(input_x, y, input_w, input_h, DTR("Password"));
+      new Fl_Secret_Input(input_x, y, input_w, input_h, "Password");
    password_input->labelsize(14);
    password_input->textsize(14);
    a_UI_apply_input_font(password_input);
@@ -984,7 +989,7 @@ int a_Dialog_user_password(const char *title, const char *msg,
 
    /* "OK" button */
    y += input_h + 20;
-   Fl_Button *ok_button = new EnterButton(200, y, 50, button_h, DTR("OK"));
+   Fl_Button *ok_button = new EnterButton(200, y, 50, button_h, "OK");
    ok_button->labelsize(14);
    a_UI_apply_label_font(ok_button);
    ok_button->callback(Dialog_user_password_cb);
@@ -992,7 +997,7 @@ int a_Dialog_user_password(const char *title, const char *msg,
 
    /* "Cancel" button */
    Fl_Button *cancel_button =
-      new EnterButton(50, y, 100, button_h, DTR("Cancel"));
+      new EnterButton(50, y, 100, button_h, "Cancel");
    cancel_button->labelsize(14);
    a_UI_apply_label_font(cancel_button);
    cancel_button->callback(Dialog_user_password_cb);

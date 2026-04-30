@@ -52,6 +52,31 @@
 #define _MSG(...)
 #define MSG(...)  printf("[downloads dpi]: " __VA_ARGS__)
 
+static int Wget_supports_load_cookies()
+{
+   static int supported = -1;
+   FILE *fp;
+   char line[512];
+
+   if (supported != -1)
+      return supported;
+
+   supported = 0;
+   fp = popen("wget --help 2>&1", "r");
+   if (!fp)
+      return supported;
+
+   while (fgets(line, sizeof(line), fp)) {
+      if (strstr(line, "--load-cookies")) {
+         supported = 1;
+         break;
+      }
+   }
+   pclose(fp);
+
+   return supported;
+}
+
 /*
  * Class declarations
  */
@@ -330,12 +355,15 @@ DLItem::DLItem(const char *full_filename, const char *url, const char *user_agen
    dl_argv[i++] = (char*)"-U";
    dl_argv[i++] = (char*) user_agent;
    dl_argv[i++] = (char*)"-c";
-   dl_argv[i++] = (char*)"--load-cookies";
-   dl_argv[i++] = cookies_path;
+   if (Wget_supports_load_cookies()) {
+      dl_argv[i++] = (char*)"--load-cookies";
+      dl_argv[i++] = cookies_path;
+   }
    dl_argv[i++] = (char*)"-O";
    dl_argv[i++] = fullname;
    dl_argv[i++] = esc_url;
    dl_argv[i++] = NULL;
+
 
    DataDone = 0;
    LogDone = 0;
@@ -464,16 +492,32 @@ void DLItem::prButton_cb()
 
 void DLItem::child_init()
 {
-   dClose(0); // stdin
-   dClose(1); // stdout
+   int null_fd;
+
    dClose(LogPipe[0]);
+
+   /*
+    * Do not leave standard descriptors closed. Some BusyBox applets do not
+    * behave like GNU tools when stdin/stdout are closed. Give wget a valid
+    * stdin from /dev/null and route stdout/stderr to the log pipe.
+    */
+   null_fd = open("/dev/null", O_RDONLY);
+   if (null_fd >= 0) {
+      dup2(null_fd, 0);
+      if (null_fd > 2)
+         dClose(null_fd);
+   }
+
+   dup2(LogPipe[1], 1); // stdout
    dup2(LogPipe[1], 2); // stderr
+   if (LogPipe[1] > 2)
+      dClose(LogPipe[1]);
+
    // set the locale to C for log parsing
    setenv("LC_ALL", "C", 1);
    // start wget
    execvp(dl_argv[0], dl_argv);
 }
-
 /*
  * Update displayed size
  */

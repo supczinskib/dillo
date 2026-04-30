@@ -115,6 +115,9 @@ static const char *detect_app_language(void)
 }
 
 static const TranslationEntry translations[] = {
+   {"Cut", "قص", "剪切", "Knippen", "Cut", "Couper", "Ausschneiden", "Taglia", "Wytnij", "Cortar", "Вырезать", "Cortar", "Kes"},
+   {"Copy", "نسخ", "复制", "Kopiëren", "Copy", "Copier", "Kopieren", "Copia", "Kopiuj", "Copiar", "Копировать", "Copiar", "Kopyala"},
+   {"Paste", "لصق", "粘贴", "Plakken", "Paste", "Coller", "Einfügen", "Incolla", "Wklej", "Colar", "Вставить", "Pegar", "Yapıştır"},
    {"OK", "موافق", "确定", "OK", "OK", "OK", "OK", "OK", "OK", "OK", "ОК", "Aceptar", "Tamam"},
    {"Cancel", "إلغاء", "取消", "Annuleren", "Cancel", "Annuler", "Abbrechen", "Annulla", "Anuluj", "Cancelar", "Отмена", "Cancelar", "İptal"},
    {"Close", "إغلاق", "关闭", "Sluiten", "Close", "Fermer", "Schließen", "Chiudi", "Zamknij", "Fechar", "Закрыть", "Cerrar", "Kapat"},

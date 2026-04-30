@@ -166,6 +166,32 @@ int CustInput::handle(int e)
 
    _MSG("CustInput::handle event=%d\n", e);
 
+   if (e == FL_PUSH && Fl::event_button() == FL_RIGHT_MOUSE) {
+      static Fl_Menu_Item context_menu[] = {
+         {0, 0, 0, 0, 0, 0, 0, 0, 0},
+         {0, 0, 0, 0, 0, 0, 0, 0, 0},
+         {0, 0, 0, 0, 0, 0, 0, 0, 0},
+         {0}
+      };
+
+      context_menu[0].label(DTR("Cut"));
+      context_menu[1].label(DTR("Copy"));
+      context_menu[2].label(DTR("Paste"));
+      a_UI_apply_menu_font(context_menu);
+
+      const Fl_Menu_Item *choice = context_menu->popup(Fl::event_x(),
+                                                        Fl::event_y());
+      if (choice == &context_menu[0]) {
+         copy(1);
+         cut();
+      } else if (choice == &context_menu[1]) {
+         copy(1);
+      } else if (choice == &context_menu[2]) {
+         Fl::paste(*this, true);
+      }
+      return 1;
+   }
+
    // We're only interested in some flags
    unsigned modifier = Fl::event_state() & (FL_SHIFT | FL_CTRL | FL_ALT);
 
